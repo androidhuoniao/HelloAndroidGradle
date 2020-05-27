@@ -1,0 +1,27 @@
+println "custom.gradle============"
+//先定义一个普通的java类，包含2个属性
+class Foo {
+    int age
+    String username
+    String toString() {
+        return "name = ${username}, age = ${age}"
+    }
+}
+//创建一个名为 foo 的Extension
+getExtensions().create("foo", Foo)
+getExtensions().create("myfoo", Foo)
+//配置Extension
+foo {
+    age = 30
+    username = "hjy"
+}
+myfoo {
+    age = 32
+    username = "grass"
+}
+
+task testExt{
+    //能直接通过 project 获取到自定义的 Extension
+    println project.foo
+    println project.myfoo
+}
