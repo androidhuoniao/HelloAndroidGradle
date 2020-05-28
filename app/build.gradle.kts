@@ -44,3 +44,62 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
 }
+
+afterEvaluate {
+    println("afaterEvaluate is working")
+    android.applicationVariants.all {
+        println("varient: " + this.toString())
+        var varientMap = mapOf(
+            "name" to this.name,
+            "varientnameCapitalize" to this.name?.capitalize(),
+            "builteType" to this.buildType.name,
+            "flavor" to this.flavorName
+        )
+        var variantNameCapitalize = this.name.capitalize()
+        var variantNameLowerCase = this.name.toLowerCase()
+        println(varientMap.toString())
+        if ("release".equals(buildType.name)) {
+            println("====buildType is release")
+            mergeAssetsProvider.get().doLast {
+                println("deleting css")
+            }
+        } else if ("debug".equals(buildType.name)) {
+            println("=====buildType is debug")
+        } else {
+            println("=====buildType is ${buildType.name}")
+        }
+
+        var buildApkTask = tasks.findByName("assemble${variantNameCapitalize}")
+        buildApkTask?.doLast {
+            println("buildApkTask.doLast()")
+        }
+
+        var variant = this;
+        var prepareBuildTask = tasks.findByName("pre${variantNameCapitalize}Build")
+        prepareBuildTask.let {
+            prepareBuildTask?.outputs?.upToDateWhen { false }
+            prepareBuildTask?.doFirst {
+                println("task, do first" + variantNameLowerCase)
+                beforePrepareDependencies(variant, variantNameLowerCase)
+            }
+            prepareBuildTask?.doLast {
+                println("task, do last" + variantNameLowerCase)
+                afterPrepareDependencies(variant, variantNameLowerCase)
+            }
+        }
+    }
+}
+
+fun beforePrepareDependencies(
+    variant: com.android.build.gradle.api.ApplicationVariant,
+    variantName: String
+) {
+
+}
+
+fun afterPrepareDependencies(
+    variant: com.android.build.gradle.api.ApplicationVariant,
+    variantName: String
+) {
+
+}
