@@ -1,0 +1,3 @@
+rootProject.name="HelloAndroidGradle"
+include(":app")
+include (":customPlugin")
